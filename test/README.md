@@ -20,3 +20,41 @@
     # ─────────────────────────────────────────────────────────────────────────
 
 ```
+
+```
+-    real_sample_num = ops.sum(sample_valid_len != 1, dtype=mstype.int32)
++    # when there's only one sample per batch, average over all bs entries
++    if pack_sample_num == 1:
++        real_sample_num = Tensor(batch_size, mstype.int32)
++    else:
++        # for true packing you may want to count only segments with >0 length
++        real_sample_num = ops.sum(sample_valid_len > 0, dtype=mstype.int32)
+```
+
+Dummy mask fix (more robust)
+```
+# in pack_grouped_data_new:
+dummy_mask = np.zeros(total_samples, dtype=int)
+# for real i in [0..real_sample_num-1]: dummy_mask[i] = 1
+# for dummies i in [real..]:          dummy_mask[i] = 0
+
+return {
+  ...,
+  "dummy_mask": dummy_mask,      # 1 for real slots, 0 for dummy
+}
+
+def construct(
+    ...,
+    sample_valid_len,    # [bs, packed_sample_num]
+    dummy_mask,          # [bs, packed_sample_num], 1=real,0=dummy
+):
+    ...
+    deno = ...
+    nume = sample_valid_len
+
+    dm = self.cast(dummy_mask, deno.dtype)        # [bs,packed]
+    per_slot = (deno / nume) * dm                 # zero out dummy slots
+    real_sample_num = dm.sum(dtype=mstype.int32)  # count only the real ones
+    loss = per_slot.sum() / real_sample_num
+    return loss
+```
