@@ -115,7 +115,6 @@ class GRPOConfig:
     detokenize: bool = False
 
     packing: bool = True
-    packing_sample_length: int = 2048 #1024
     pack_num: int = 1
 
     tensorboard_dir: str = ""
