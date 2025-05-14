@@ -492,6 +492,7 @@ class GRPOTrainer:
         all_responses_mask = reconstruct_index(all_responses_mask, num_generations)
         advantages = reconstruct_index(advantages, num_generations)
         if not self.grpo_config.packing:
+            logger.warning(f"input self.grpo_config.packing is False, set pack_num (maximum pack num in one sample) to be 1")
             pack_num = 1
         else:
             pack_num = self.grpo_config.pack_num
