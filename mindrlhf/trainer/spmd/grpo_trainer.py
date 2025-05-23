@@ -35,7 +35,7 @@ from mindformers import MindFormerConfig
 from mindformers.models.build_tokenizer import build_tokenizer
 from mindformers.utils.tensorboard import get_tensorboard_writer, _set_tensorboard_writer
 
-from mindrlhf.trainer.packing_utils import pack_grpo_data, construct_inputs_packing
+from mindrlhf.utils.packing_utils import pack_grpo_data, construct_inputs_packing
 from mindrlhf.utils import (transfer_from_str_to_bool, yaml_to_dataclass, set_perf_stats, print_perf_stat,
                             convert_index_json_total, save_prompt_completions_data, MetricData, get_dp_rank)
 # mindrlhf
