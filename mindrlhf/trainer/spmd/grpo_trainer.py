@@ -495,6 +495,11 @@ class GRPOTrainer:
             logger.warning(f"input self.grpo_config.packing is False, set pack_num (maximum pack num in one sample) to be 1")
             pack_num = 1
         else:
+            if self.grpo_config.pack_num <= 0:
+                raise ValueError(
+                f"'pack_num' must be a positive integer when 'packing' is True, "
+                f"but got {self.grpo_config.pack_num!r}"
+            )
             pack_num = self.grpo_config.pack_num
         all_packed = self.pack_grpo_data(
             all_prompt_completion_ids, all_prompts_mask, all_responses_mask, advantages, pack_num)
